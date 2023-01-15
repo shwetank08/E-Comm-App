@@ -1,15 +1,20 @@
 const mongoose = require("mongoose");
 const authRole = require("../util/authRole");
-const user = mongoose.Schema(
+const JWT = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
+const validator = require('validator');
+const { SECRET, EXPIRY } = process.env;
+const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "please provide name"],
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "please provide email"],
+      validate: [validator.isEmail, "please provide valid email"],
       unique: true,
     },
     password: {
@@ -22,7 +27,7 @@ const user = mongoose.Schema(
     role: {
       type: String,
       enum: Object.values(authRole),
-      default: authRole.user,
+      default: authRole.USER,
     },
   },
   {
@@ -30,4 +35,31 @@ const user = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", user);
+userSchema.pre('save', async function(next){
+  if(!this.isModified("password")){
+    return next();
+  }
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+})
+
+userSchema.methods = {
+  getJwtToken: function () {
+    return JWT.sign(
+      {
+        _id: this._id,
+        role: this.role,
+      },
+      SECRET,
+      {
+        expiresIn: EXPIRY,
+      }
+    );
+  },
+
+  comparePassword: async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword, this.password);
+  }
+};
+
+module.exports = mongoose.model("User", userSchema);
