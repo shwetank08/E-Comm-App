@@ -20,7 +20,7 @@ app.use(cookieParser())
 app.use(fileUpload({
     useTempFiles:true,
     tempFileDir:"/tmp/"
-}))
+}));
 
 app.use('/api',user)
 app.use('/api',product)
