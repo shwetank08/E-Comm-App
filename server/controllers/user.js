@@ -3,17 +3,17 @@ const User = require("../model/user");
 const BigPromise = require("../util/bigPromise");
 const cookieToken = require("../util/cookieToken");
 const CustomError = require("../util/customError");
-
+const jwt = require("jsonwebtoken");
 
 exports.signup = BigPromise(async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    return res.status(400).send("All fields are required");
+    throw new CustomError("All fields are required", 400);
   }
 
-  const existingUser = await User.findOne({email});
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
-    return res.status(400).send("user already exists!");
+    throw new CustomError("user already exists!", 400);
   }
 
   const newuser = await User.create({
@@ -26,31 +26,66 @@ exports.signup = BigPromise(async (req, res) => {
   cookieToken(newuser, res);
 });
 exports.signin = BigPromise(async (req, res) => {
-  const {email, password } = req.body;
+  const { email, password } = req.body;
   if (!email || !password) {
-    throw CustomError("All fields are required", 400);
+    throw new CustomError("All fields are required", 400);
   }
 
-  const user = await User.findOne({email}).select("+password");
+  const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    throw CustomError("username or password incorrect", 400);
+    throw new CustomError("username or password incorrect", 400);
   }
-  console.log(password)
+  console.log(password);
 
   const isPasswordMatch = await user.comparePassword(password);
-  if(!isPasswordMatch){
-    throw CustomError("username or password incorrect", 400);
+  if (!isPasswordMatch) {
+    throw new CustomError("username or password incorrect", 400);
   }
 
   cookieToken(user, res);
 });
 exports.logout = BigPromise(async (req, res) => {
-  res.cookie("token",null,{
+  res.cookie("token", null, {
     expires: new Date(Date.now()),
-    httpOnly: true
+    httpOnly: true,
   });
 
   res.status(200).send({
-    logout: "success"
-  })
+    logout: "success",
+  });
+});
+exports.isLoggedIn = BigPromise(async (req, res, next) => {
+  const token =
+    req.cookies.token || req.headers("Authorization").replace("Bearer", "");
+
+  if (!token) {
+    throw new CustomError("user not logged in", 400);
+  }
+
+  try {
+    const decode = jwt.verify(token, process.env.SECRET);
+    req.user = User.findById(decode._id, "name email role");
+    next();
+  } catch (err) {
+    console.log(err);
+    throw new CustomError("Not authorized to access this route", 400);
+  }
+});
+exports.isAdmin = BigPromise(async (req, res, next) => {
+  const token =
+    req.cookies.token || req.headers("Authorization").replace("Bearer", "");
+
+  if (!token) {
+    throw new CustomError("user not logged in", 400);
+  }
+
+  try {
+    const decode = jwt.verify(token, process.env.SECRET);
+    req.user = User.findById(decode._id, "name email role");
+    console.log(req.user.role);
+    next();
+  } catch (err) {
+    console.log(err);
+    throw new CustomError("Not authorized to access this route", 400);
+  }
 });

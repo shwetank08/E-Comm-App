@@ -3,4 +3,4 @@ const Categories = {
     Hoodie: "Hoodie", 
 }
 
-export default Categories;
+module.exports = Categories;
