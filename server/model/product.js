@@ -27,7 +27,7 @@ const product = mongoose.Schema(
         type: String,
         required: true,
       },
-      secured_url: {
+      secure_url: {
         type: String,
         required: true,
       },
@@ -35,12 +35,13 @@ const product = mongoose.Schema(
     category: {
       type: String,
       enum: Object.values(Categories),
+      default: Categories.TShirt,
       required: true,
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: true,
+      required: true
     },
   },
   {

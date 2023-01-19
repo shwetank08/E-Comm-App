@@ -56,8 +56,8 @@ exports.logout = BigPromise(async (req, res) => {
 });
 exports.isLoggedIn = BigPromise(async (req, res, next) => {
   const token =
-    req.cookies.token || req.headers("Authorization").replace("Bearer", "");
-
+    req.cookies.token || (req.headers.authorization && req.headers["authorization"].split(" ")[1]);
+  
   if (!token) {
     throw new CustomError("user not logged in", 400);
   }

@@ -22,8 +22,8 @@ exports.addProduct = BigPromise(async (req, res) => {
       secure_url: result.secure_url,
   }
   req.body.photos = imageObj;
-  req.body.user = req.user.id;
-
+  console.log(req.user.id); 
+  
   const product = await Product.create(req.body);
 
   res.status(200).json({

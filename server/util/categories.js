@@ -1,5 +1,5 @@
 const Categories = {
-    TShirt: "T-shirt",
+    TShirt: "Tees",
     Hoodie: "Hoodie", 
 }
 
