@@ -54,5 +54,25 @@ exports.logout = BigPromise(async (req, res) => {
     logout: "success",
   });
 });
+exports.getAllUser = BigPromise(async(req,res)=>{
+  const showAllUsers = await User.find();
+  if(!showAllUsers){
+    throw new CustomError("No user present", 400);
+  }
+  res.status(200).json({
+    success: "true",
+    showAllUsers,
+  })
+});
+exports.getUser = BigPromise(async(req,res)=>{
+  const showUser = await User.findById(req.params.id);
+  if(showUser){
+    throw new CustomError("No user present", 400);
+  }
+  res.status(200).json({
+    success: "true",
+    showUser,
+  })
+});
 
 

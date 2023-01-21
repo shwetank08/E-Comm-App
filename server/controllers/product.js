@@ -4,6 +4,8 @@ const CustomError = require("../util/customError");
 const cloudinary = require("cloudinary");
 const Product = require("../model/product");
 
+const {FOLDER} = process.env;
+
 exports.addProduct = BigPromise(async (req, res) => {
   let result;
 
@@ -13,7 +15,7 @@ exports.addProduct = BigPromise(async (req, res) => {
 
   let file = req.files.photos;
   result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
-    folder: "product",
+    folder: FOLDER,
   });
 
   const imageObj = {
@@ -30,22 +32,20 @@ exports.addProduct = BigPromise(async (req, res) => {
     product,
   });
 });
-
 exports.updateProduct = BigPromise(async (req, res) => {
   let productToUpdate = await Product.findById(req.params.id);
-  console.log(productToUpdate);
   if(!productToUpdate){
     throw new CustomError("No product available", 400);
   }
 
   if (req.files) {
     let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
-      folder: "product",
+      folder: FOLDER,
     });
     let newImage;
     let file = req.files.photos;
     newImage = await cloudinary.v2.uploader.upload(file.tempFilePath, {
-      folder: "product",
+      folder: FOLDER,
     });
 
     const imageObj = {
@@ -65,4 +65,40 @@ exports.updateProduct = BigPromise(async (req, res) => {
     success: true,
     product,
   });
+});
+exports.deleteProduct = BigPromise(async(req,res)=>{
+  let productToBeDeleted = await Product.findById(req.params.id);
+
+  let deletePhoto = await cloudinary.v2.uploader.destroy(productToBeDeleted.photos.id,{
+    folder: FOLDER
+  })
+
+  let deleteProduct = await Product.findByIdAndDelete(req,params.id);
+
+  res.status(200).json({
+    success:"true",
+    deleteProduct
+  })
+});
+exports.getAllProduct = BigPromise(async(req,res)=>{
+  const showAllProduct = await Product.find();
+  if(!showAllProduct){
+    throw new CustomError("No product not found", 400);
+  }
+
+  res.status(200).json({
+    success:"true",
+    showAllProduct
+  })
+});
+exports.getOneProduct = BigPromise(async(req,res)=>{
+  const showOneProduct = await Product.findById(req.params.id);
+  if(!showOneProduct){
+    throw new CustomError("No product not found", 400);
+  }
+
+  res.status(200).json({
+    success:"true",
+    showOneProduct
+  })
 });
