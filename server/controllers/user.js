@@ -54,38 +54,5 @@ exports.logout = BigPromise(async (req, res) => {
     logout: "success",
   });
 });
-exports.isLoggedIn = BigPromise(async (req, res, next) => {
-  const token =
-    req.cookies.token || (req.headers.authorization && req.headers["authorization"].split(" ")[1]);
-  
-  if (!token) {
-    throw new CustomError("user not logged in", 400);
-  }
 
-  try {
-    const decode = jwt.verify(token, process.env.SECRET);
-    req.user = User.findById(decode._id, "name email role");
-    next();
-  } catch (err) {
-    console.log(err);
-    throw new CustomError("Not authorized to access this route", 400);
-  }
-});
-exports.isAdmin = BigPromise(async (req, res, next) => {
-  const token =
-    req.cookies.token || req.headers("Authorization").replace("Bearer", "");
 
-  if (!token) {
-    throw new CustomError("user not logged in", 400);
-  }
-
-  try {
-    const decode = jwt.verify(token, process.env.SECRET);
-    req.user = User.findById(decode._id, "name email role");
-    console.log(req.user.role);
-    next();
-  } catch (err) {
-    console.log(err);
-    throw new CustomError("Not authorized to access this route", 400);
-  }
-});
