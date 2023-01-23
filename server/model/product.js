@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Categories = require("../util/categories");
 
-const product = mongoose.Schema(
+const productSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -49,4 +49,4 @@ const product = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Product", product);
+module.exports = mongoose.model("Product", productSchema);

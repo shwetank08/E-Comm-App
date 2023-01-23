@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const user = require('./routes/user');
 const product = require('./routes/product');
+const order = require('./routes/order');
 
 
 
@@ -24,5 +25,6 @@ app.use(fileUpload({
 
 app.use('/api',user)
 app.use('/api',product)
+app.use('/api',order)
 
 module.exports = app;
