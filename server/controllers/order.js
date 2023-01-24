@@ -34,7 +34,7 @@ exports.createOrder = BigPromise(async (req, res) => {
 });
 
 exports.getOneOrder = BigPromise(async(req,res)=>{
-    const order = await Order.findById(req.params.id).populate('user', 'name email');
+    const order = await Order.find({user: req.user._id}).populate('user', 'name email');
     if(!order){
         throw new CustomError('Please check order ID', 401);
     }
@@ -84,6 +84,18 @@ exports.updateOrder = BigPromise(async(req,res)=>{
 
     res.status(200).json({
         success: true,
+        order
+    })
+})
+
+exports.deleteOrder = BigPromise(async(req,res)=>{
+    const order = await Order.findByIdAndDelete(req.params.id);
+    if(!order){
+        throw new CustomError('Order not found', 404);
+    }
+
+    res.status(200).json({
+        success: "true",
         order
     })
 
