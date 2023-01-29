@@ -5,6 +5,7 @@ import Footer from "./Layout/Footer";
 import Header from "./Layout/Header";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
+import Signin from "./pages/Signin";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/api/home" element={<Home/>} />
         <Route path="/api/signup" element={<Signup/>} />
+        <Route path="/api/signin" element={<Signin/>}/>
       </Routes>
       <Footer />
     </BrowserRouter>

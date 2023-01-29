@@ -4,16 +4,16 @@ import Navbar from "react-bootstrap/Navbar";
 const Footer = () => {
   return (
     <Navbar
-      bg="dark"
+      bg="black"
       variant="dark"
       fixed="bottom"
       className="d-flex justify-content-center"
     >
       <div>
         <Nav className="me-auto">
-          <Nav.Link href="#home">Facebook</Nav.Link>
-          <Nav.Link href="#features">Instagram</Nav.Link>
-          <Nav.Link href="#pricing">Twitter</Nav.Link>
+          <Nav.Link href="#home" className="text-white">Facebook</Nav.Link>
+          <Nav.Link href="#features" className="text-white">Instagram</Nav.Link>
+          <Nav.Link href="#pricing" className="text-white">Twitter</Nav.Link>
         </Nav>
       </div>
     </Navbar>

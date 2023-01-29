@@ -6,7 +6,6 @@ import Card from "react-bootstrap/Card";
 
 const Signup = () => {
   const [user, setUser] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -15,14 +14,13 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch('/api/signup', {
+      const res = await fetch('/api/signin', {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: user.name,
           email: user.email,
           password: user.password,
         }),
@@ -30,9 +28,9 @@ const Signup = () => {
 
       const data = await res.json();
       if (!data || data.status === 400) {
-        return alert("user not signed up!");
+        return alert("can't sign in user!");
       }else{
-        console.log('user signed up')
+        console.log('user signed in')
       }
     } catch (err) {
       console.log(err);
@@ -53,18 +51,8 @@ const Signup = () => {
         className="p-4 border-0"
       >
         <Card.Body className="">
-          <h2 className="text-center text-black">Sign Up</h2>
+          <h2 className="text-center text-black">Sign In</h2>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="formGroupEmail">
-              <Form.Label className="text-black">Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter Name"
-                onChange={(e) => {
-                  setUser({ ...user, name: e.target.value });
-                }}
-              />
-            </Form.Group>
             <Form.Group className="mb-3" controlId="formGroupEmail">
               <Form.Label className="text-black">Email address</Form.Label>
               <Form.Control
@@ -92,7 +80,7 @@ const Signup = () => {
               className="w-100"
               onClick={handleSubmit}
             >
-              SIGN UP
+              SIGN IN
             </Button>
           </Form>
         </Card.Body>
