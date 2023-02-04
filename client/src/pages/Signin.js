@@ -30,7 +30,7 @@ const Signup = () => {
       if (!data || data.status === 400) {
         return alert("can't sign in user!");
       }else{
-        console.log('user signed in')
+        console.log('user signed in', data)
       }
     } catch (err) {
       console.log(err);
