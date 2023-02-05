@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
-
-const Signup = () => {
+import { userContext } from "../context/userContext";
+const Signin = () => {
+  const context = useContext(userContext);
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -30,7 +31,8 @@ const Signup = () => {
       if (!data || data.status === 400) {
         return alert("can't sign in user!");
       }else{
-        console.log('user signed in', data)
+        context.setUser({userid: data.user._id})
+        console.log('user signed in')
       }
     } catch (err) {
       console.log(err);
@@ -89,4 +91,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Signin;

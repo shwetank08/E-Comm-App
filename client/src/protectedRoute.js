@@ -1,19 +1,20 @@
-import React from 'react'
-import { useJwt } from "react-jwt";
-import { useNavigate, Outlet} from 'react-router-dom';
+import React, { useContext, useEffect } from "react";
+import { useNavigate, Outlet } from "react-router-dom";
+import { userContext } from "./context/userContext";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
+  const context = useContext(userContext);
+  const id = context.user?.userid ? context.user?.userid : null;
 
-  const tokn = document.cookie.token
-  console.log(tokn);
+  useEffect(() => {
+    if (!id) {
+      console.log("user not signed in");
+      navigate("/api/signin");
+    }
+  }, []);
 
-  if(tokn){
-      return navigate("/api/signin");
-  }
-
-  
-  return <Outlet/>;
-}
+  return <Outlet />;
+};
 
 export default ProtectedRoute;

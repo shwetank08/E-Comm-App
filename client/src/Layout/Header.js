@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { NavLink } from "react-router-dom";
+import { userContext } from "../context/userContext";
+
 const Header = () => {
+  const context = useContext(userContext);
+  const user = context?.user?.userid;
+  console.log(user)
   return (
     <Navbar
       bg="black"
@@ -17,15 +22,24 @@ const Header = () => {
       </div>
       <div>
         <Nav className="me-auto">
-          <Nav.Link href="#home" className="text-white">
-            Home
+          <Nav.Link className="text-white">
+            <NavLink
+              to="/api/u/home"
+              style={{ color: "inherit", textDecoration: "inherit" }}
+            >
+              Home
+            </NavLink>
           </Nav.Link>
-          <Nav.Link href="#features" className="text-white">
-            Features
-          </Nav.Link>
-          <Nav.Link href="#pricing" className="text-white">
-            Pricing
-          </Nav.Link>
+          {user && (
+            <Nav.Link className="text-white">
+              <NavLink
+                to="/api/u/cart"
+                style={{ color: "inherit", textDecoration: "inherit" }}
+              >
+                Cart
+              </NavLink>
+            </Nav.Link>
+          )}
         </Nav>
       </div>
       <div>
