@@ -1,7 +1,9 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+
 const Cards = () => {
+  // const [product,]
   return (
     <Card style={{ width: "18rem" }}>
         <Card.Img variant="top" src="holder.js/100px180" />

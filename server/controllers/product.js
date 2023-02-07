@@ -81,7 +81,10 @@ exports.deleteProduct = BigPromise(async(req,res)=>{
   })
 });
 exports.getAllProduct = BigPromise(async(req,res)=>{
-  const showAllProduct = await Product.find();
+  const page = req.query.page || 0;
+  const perpage = req.query.limit || 6;
+
+  const showAllProduct = await Product.find().skip(page*perpage).limit(perpage);
   if(!showAllProduct){
     throw new CustomError("No product not found", 400);
   }
