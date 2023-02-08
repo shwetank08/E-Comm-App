@@ -31,7 +31,7 @@ const Signin = () => {
       if (!data || data.status === 400) {
         return alert("can't sign in user!");
       }else{
-        context.setUser({userid: data.user._id})
+        context.setUser({userid: data.user._id, role: data.user.role, productId: ""})
         console.log('user signed in')
       }
     } catch (err) {
