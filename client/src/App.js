@@ -11,10 +11,12 @@ import { userContext } from "./context/userContext";
 import AdminDashBoard from "./pages/AdminDashBoard";
 
 const App = () => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [productId, setProductId] = useState(null);
+  const [orderId, setOrderId] = useState(null);
   return (
     <BrowserRouter>
-      <userContext.Provider value={{ user, setUser }}>
+      <userContext.Provider value={{ user, setUser, productId, setProductId, orderId, setOrderId }}>
         <Header />
         <Routes>
           <Route element={<ProtectedRoute/>}>

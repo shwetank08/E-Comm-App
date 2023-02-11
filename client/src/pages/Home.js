@@ -26,7 +26,9 @@ const Home = () => {
   };
 
   const handleAdmin = (e) => {
-    console.log(e);
+    
+    context.setProductId({id: e});
+    console.log(context.productId?.id);
   }
 
   useEffect(() => {
@@ -56,9 +58,8 @@ const Home = () => {
                   <Card.Text>&#8377;{item.price}</Card.Text>
                 </Card.Title>
                 <Card.Text className="text-center">{item.description}</Card.Text>
-                {console.log(context.role)}
                 {context.user.role == "ADMIN" ? (
-                  <Button variant="primary" onClick={(item)=>handleAdmin(item)}>Edit</Button>
+                  <Button variant="primary" onClick={()=>handleAdmin(item._id)}>Edit</Button>
                 ) : (
                   <Button variant="primary">Add To Cart</Button>
                 )}

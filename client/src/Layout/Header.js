@@ -7,6 +7,8 @@ import { userContext } from "../context/userContext";
 const Header = () => {
   const context = useContext(userContext);
   const user = context?.user?.userid;
+  const admin = context?.user?.role;
+
   console.log(user)
   return (
     <Navbar
@@ -30,6 +32,17 @@ const Header = () => {
               Home
             </NavLink>
           </Nav.Link>
+          {admin=="ADMIN" && (
+            <Nav.Link className="text-white">
+              <NavLink
+                to="/api/u/admindashboard"
+                style={{ color: "inherit", textDecoration: "inherit" }}
+              >
+                Dashboard
+              </NavLink>
+            </Nav.Link>
+          )
+          }
           {user && (
             <Nav.Link className="text-white">
               <NavLink

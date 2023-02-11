@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
-
+import { userContext } from "../context/userContext";
 const Signup = () => {
+
+  const context = useContext(userContext);
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -32,6 +34,7 @@ const Signup = () => {
       if (!data || data.status === 400) {
         return alert("user not signed up!");
       }else{
+        context.setUser({userid: data.user._id, role: data.user.role, productId: ""})
         console.log('user signed up')
       }
     } catch (err) {
