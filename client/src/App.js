@@ -9,6 +9,8 @@ import Signin from "./pages/Signin";
 import ProtectedRoute from "./protectedRoute";
 import { userContext } from "./context/userContext";
 import AdminDashBoard from "./pages/AdminDashBoard";
+import OrderDashBoard from "./pages/OrderDashBoard";
+import ProductDashboard from "./pages/ProductDashboard";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -24,6 +26,12 @@ const App = () => {
           </Route>
           <Route element={<ProtectedRoute/>}>
             <Route path="/api/u/admindashboard" element={<AdminDashBoard />} />
+          </Route>
+          <Route element={<ProtectedRoute/>}>
+            <Route path="/api/u/admindashboard/order" element={<OrderDashBoard />} />
+          </Route>
+          <Route element={<ProtectedRoute/>}>
+            <Route path="/api/u/admindashboard/product" element={<ProductDashboard />} />
           </Route>
           <Route path="/api/signup" element={<Signup />} />
           <Route path="/api/signin" element={<Signin />} />
