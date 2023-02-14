@@ -7,11 +7,24 @@ import Container from "react-bootstrap/esm/Container";
 import Card from "react-bootstrap/Card";
 
 const ProductDashboard = () => {
-  const [product, setProduct] = useState({});
+  //for fetching product if user clicked on update
+  const [product, setProduct] = useState({
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    photos: "",
+    category: "",
+  });
 
+  //for populating fields to update or create
+  // const [item, setItems] = useState({
+
+  // });
   const navigate = useNavigate();
   const context = useContext(userContext);
   const id = context.productId?.id;
+  const isUpdate = context.isUpdate;
   const handleGet = async () => {
     const res = await fetch(`/api/${id}/getproduct`, {
       method: "GET",
@@ -24,11 +37,11 @@ const ProductDashboard = () => {
     const data = await res.json();
     setProduct(data.showOneProduct);
   };
-    useEffect(() => {
-      if(id){
-        handleGet();
-      }
-    }, [id]);
+  useEffect(() => {
+    if (id) {
+      handleGet();
+    }
+  }, [id]);
 
   const handleProduct = () => {
     navigate("/api/u/admindashboard/product");
@@ -36,6 +49,40 @@ const ProductDashboard = () => {
   const handleOrder = () => {
     navigate("/api/u/admindashboard/order");
   };
+
+  const handleAdd = () => {};
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`/api/${id}/updateproduct`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          stock: product.stock,
+          photos: product.photos,
+          category: product.category,
+        }),
+      });
+
+      const data = await res.json();
+      if (!data || res.status === 400) {
+        alert("update failed");
+      }
+      console.log("success", data);
+      context.setProductId("");
+      context.setIsUpdate(false);
+      navigate("/api/u/home");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <aside
@@ -101,8 +148,12 @@ const ProductDashboard = () => {
         }}
       >
         <Card
-          style={{ width: "34rem", backgroundColor: "#f5f5f5" }}
-          className="p-4 border-0"
+          style={{
+            width: "34rem",
+            backgroundColor: "#f5f5f5",
+            marginTop: "3.5rem",
+          }}
+          className="pl-4 pr-4 border-0"
         >
           <Card.Body className="">
             <h2 className="text-center text-black">Manage Product</h2>
@@ -112,33 +163,78 @@ const ProductDashboard = () => {
                 <Form.Control
                   type="text"
                   placeholder="Enter Name"
-                  value={product.name ? product.name : "name"}
+                  name="name"
+                  value={product.name ? product.name : ""}
+                  onChange={(e) => {
+                    setProduct({ ...product, name: e.target.value });
+                  }}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Description</Form.Label>
-                <Form.Control type="text" placeholder="Enter Description" value={product.description ? product.description : "description"}/>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Description"
+                  value={product.description ? product.description : ""}
+                  onChange={(e) => {
+                    setProduct({ ...product, description: e.target.value });
+                  }}
+                />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Price</Form.Label>
-                <Form.Control type="text" placeholder="Enter Price" value={product.price ? product.price : "price"} />
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Price"
+                  value={product.price ? product.price : ""}
+                  onChange={(e) => {
+                    setProduct({ ...product, price: e.target.value });
+                  }}
+                />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Stock</Form.Label>
-                <Form.Control type="text" placeholder="Enter Stock" value={product.stock ? product.stock : "stock"}/>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Stock"
+                  value={product.stock ? product.stock : ""}
+                  onChange={(e) => {
+                    setProduct({ ...product, stock: e.target.value });
+                  }}
+                />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
-                <Form.Label className="text-black">Photos</Form.Label>
-                <Form.Control type="text" placeholder="Enter Photos" />
+                <Form.Label className="text-black">Photo</Form.Label>
+                <Form.Control type="file" controlId="formFile" />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Category</Form.Label>
-                <Form.Control type="text" placeholder="Enter Category" value={product.category ? product.category : "category"}/>
+                <Form.Select
+                  onChange={(e) => setProduct({...product, category:e.currentTarget.value})}
+                >
+                  <option value="Tees">TEES</option>
+                  <option value="Hoodie">HOODIE</option>
+                </Form.Select>
               </Form.Group>
-
-              <Button variant="outline-dark" type="submit" className="w-100">
-                Update
-              </Button>
+              {isUpdate ? (
+                <Button
+                  variant="outline-dark"
+                  type="submit"
+                  className="w-100"
+                  onClick={(e) => handleUpdate(e)}
+                >
+                  Update
+                </Button>
+              ) : (
+                <Button
+                  variant="outline-dark"
+                  type="submit"
+                  className="w-100"
+                  onClick={handleAdd}
+                >
+                  Add
+                </Button>
+              )}
             </Form>
           </Card.Body>
         </Card>

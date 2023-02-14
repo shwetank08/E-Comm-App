@@ -11,6 +11,8 @@ const OrderDashBoard = () => {
   const context = useContext(userContext);
   console.log(context.productId?.id);
 
+ 
+
   const handleProduct = () =>{
     navigate("/api/u/admindashboard/product");
   }
@@ -80,8 +82,8 @@ const OrderDashBoard = () => {
         }}
       >
         <Card
-          style={{ width: "34rem", backgroundColor: "#f5f5f5" }}
-          className="p-4 border-0"
+        style={{ width: "34rem", backgroundColor: "#f5f5f5",marginTop: '3.5rem' }}
+        className="pl-4 pr-4 border-0"
         >
           <Card.Body className="">
             <h2 className="text-center text-black">Manage Order</h2>

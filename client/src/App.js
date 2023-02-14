@@ -16,9 +16,10 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [productId, setProductId] = useState(null);
   const [orderId, setOrderId] = useState(null);
+  const [isUpdate, setIsUpdate] = useState(false);
   return (
     <BrowserRouter>
-      <userContext.Provider value={{ user, setUser, productId, setProductId, orderId, setOrderId }}>
+      <userContext.Provider value={{ user, setUser, productId, setProductId, orderId, setOrderId, isUpdate, setIsUpdate }}>
         <Header />
         <Routes>
           <Route element={<ProtectedRoute/>}>

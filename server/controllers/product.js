@@ -54,6 +54,7 @@ exports.updateProduct = BigPromise(async (req, res) => {
     };
 
     req.body.photos = imageObj;
+    console.log("image update success")
   }
 
   const product = await Product.findByIdAndUpdate(req.params.id,req.body,{

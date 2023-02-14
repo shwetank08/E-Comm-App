@@ -5,9 +5,11 @@ import Container from "react-bootstrap/esm/Container";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { userContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [product, setProduct] = useState(null);
+  const navigate = useNavigate();
   const context = useContext(userContext);
   const fetchProducts = async () => {
     const items = await fetch("/api/getallproducts", {
@@ -26,9 +28,10 @@ const Home = () => {
   };
 
   const handleAdmin = (e) => {
-    
     context.setProductId({id: e});
     console.log(context.productId?.id);
+    context.setIsUpdate(true);
+    navigate("/api/u/admindashboard/product");    
   }
 
   useEffect(() => {
@@ -59,7 +62,7 @@ const Home = () => {
                 </Card.Title>
                 <Card.Text className="text-center">{item.description}</Card.Text>
                 {context.user.role == "ADMIN" ? (
-                  <Button variant="primary" onClick={()=>handleAdmin(item._id)}>Edit</Button>
+                  <Button variant="primary" onClick={()=>handleAdmin(item._id)}>Update</Button>
                 ) : (
                   <Button variant="primary">Add To Cart</Button>
                 )}
