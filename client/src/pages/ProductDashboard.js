@@ -13,10 +13,10 @@ const ProductDashboard = () => {
     description: "",
     price: "",
     stock: "",
-    photos: "",
     category: "",
   });
 
+  // let form = new FormData();
   //for populating fields to update or create
   // const [item, setItems] = useState({
 
@@ -53,26 +53,21 @@ const ProductDashboard = () => {
   const handleAdd = () => {};
   const handleUpdate = async (e) => {
     e.preventDefault();
+
     try {
       const res = await fetch(`/api/${id}/updateproduct`, {
         method: "PUT",
-        headers: {
+        headers:{
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify({
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          stock: product.stock,
-          photos: product.photos,
-          category: product.category,
-        }),
+        body: form,
       });
 
       const data = await res.json();
       if (!data || res.status === 400) {
-        alert("update failed");
+        navigate("/api/u/home");
+        return alert("update failed");
       }
       console.log("success", data);
       context.setProductId("");
@@ -80,6 +75,13 @@ const ProductDashboard = () => {
       navigate("/api/u/home");
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleImg = (e) => {
+    e.preventDefault();
+    if (e.target.files[0]) {
+      form.append("photos", e.target.files[0]);
     }
   };
 
@@ -167,6 +169,7 @@ const ProductDashboard = () => {
                   value={product.name ? product.name : ""}
                   onChange={(e) => {
                     setProduct({ ...product, name: e.target.value });
+                    
                   }}
                 />
               </Form.Group>
@@ -178,6 +181,7 @@ const ProductDashboard = () => {
                   value={product.description ? product.description : ""}
                   onChange={(e) => {
                     setProduct({ ...product, description: e.target.value });
+                   
                   }}
                 />
               </Form.Group>
@@ -189,6 +193,7 @@ const ProductDashboard = () => {
                   value={product.price ? product.price : ""}
                   onChange={(e) => {
                     setProduct({ ...product, price: e.target.value });
+                    
                   }}
                 />
               </Form.Group>
@@ -200,17 +205,27 @@ const ProductDashboard = () => {
                   value={product.stock ? product.stock : ""}
                   onChange={(e) => {
                     setProduct({ ...product, stock: e.target.value });
+                    
                   }}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Photo</Form.Label>
-                <Form.Control type="file" controlId="formFile" />
+                <Form.Control
+                  type="file"
+                  controlId="formFile"
+                  onChange={(e) => {
+                    setProduct({ ...product, photos: [e.target.files[0]] });
+                  }}
+                />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Category</Form.Label>
                 <Form.Select
-                  onChange={(e) => setProduct({...product, category:e.currentTarget.value})}
+                  onChange={(e) => {
+                    setProduct({ ...product, category: e.currentTarget.value });
+                    
+                  }}
                 >
                   <option value="Tees">TEES</option>
                   <option value="Hoodie">HOODIE</option>
