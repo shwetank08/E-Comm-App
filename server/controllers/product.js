@@ -32,6 +32,7 @@ exports.addProduct = BigPromise(async (req, res) => {
     product,
   });
 });
+
 exports.updateProduct = BigPromise(async (req, res) => {
   let productToUpdate = await Product.findById(req.params.id);
   if(!productToUpdate){
@@ -39,9 +40,9 @@ exports.updateProduct = BigPromise(async (req, res) => {
   }
 
   if (req.files) {
-    let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
-      folder: FOLDER,
-    });
+    // let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
+    //   folder: FOLDER,
+    // });
     let newImage;
     let file = req.files.photos;
     newImage = await cloudinary.v2.uploader.upload(file.tempFilePath, {
@@ -54,8 +55,11 @@ exports.updateProduct = BigPromise(async (req, res) => {
     };
 
     req.body.photos = imageObj;
+    let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
+      folder: FOLDER,
+    });
     console.log("image update success")
-  }
+}
 
   const product = await Product.findByIdAndUpdate(req.params.id,req.body,{
     new: true,

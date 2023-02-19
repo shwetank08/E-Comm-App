@@ -48,12 +48,12 @@ const Home = () => {
       className="flex flex-wrap gap-3"
     >
       {product &&
-        product.map((item) => {
+        product.map((item,key) => {
           {
             console.log(item);
           }
           return (
-            <Card style={{ width: "18rem" }}>
+            <Card style={{ width: "18rem" }} key={key}>
               <Card.Img variant="top" src={item.photos?.secure_url} />
               <Card.Body className="flex justify-center flex-col">
                 <Card.Title className="text-center flex justify-around">

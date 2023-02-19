@@ -15,8 +15,15 @@ const ProductDashboard = () => {
     stock: "",
     category: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  // let form = new FormData();
+  let form = new FormData();
+  form.append("name", product.name);
+  form.append("description", product.description);
+  form.append("price", product.price);
+  form.append("stock", product.stock);
+  // form.append("category", product.category);
+
   //for populating fields to update or create
   // const [item, setItems] = useState({
 
@@ -50,21 +57,42 @@ const ProductDashboard = () => {
     navigate("/api/u/admindashboard/order");
   };
 
-  const handleAdd = () => {};
-  const handleUpdate = async (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
-      const res = await fetch(`/api/${id}/updateproduct`, {
-        method: "PUT",
-        headers:{
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
+      
+      const res = await fetch(`/api/addproduct`, {
+        method: "POST",
         body: form,
       });
 
       const data = await res.json();
+      console.log("FORM -> ", form.get("category"));
+      if (!data || res.status === 400) {
+        navigate("/api/u/home");
+        return alert("product could not be added");
+      }
+      console.log("success", data);
+      setLoading(false);
+      navigate("/api/u/home");
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      return alert(err);
+    }
+  };
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      console.log(form);
+      const res = await fetch(`/api/${id}/updateproduct`, {
+        method: "PUT",
+        body: form,
+      });
+
+      const data = await res.json();
+      console.log("FORM -> ", form);
       if (!data || res.status === 400) {
         navigate("/api/u/home");
         return alert("update failed");
@@ -75,13 +103,6 @@ const ProductDashboard = () => {
       navigate("/api/u/home");
     } catch (err) {
       console.log(err);
-    }
-  };
-
-  const handleImg = (e) => {
-    e.preventDefault();
-    if (e.target.files[0]) {
-      form.append("photos", e.target.files[0]);
     }
   };
 
@@ -169,7 +190,7 @@ const ProductDashboard = () => {
                   value={product.name ? product.name : ""}
                   onChange={(e) => {
                     setProduct({ ...product, name: e.target.value });
-                    
+                    form.append("name", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -181,7 +202,7 @@ const ProductDashboard = () => {
                   value={product.description ? product.description : ""}
                   onChange={(e) => {
                     setProduct({ ...product, description: e.target.value });
-                   
+                    form.append("description", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -193,7 +214,7 @@ const ProductDashboard = () => {
                   value={product.price ? product.price : ""}
                   onChange={(e) => {
                     setProduct({ ...product, price: e.target.value });
-                    
+                    form.append("price", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -205,7 +226,7 @@ const ProductDashboard = () => {
                   value={product.stock ? product.stock : ""}
                   onChange={(e) => {
                     setProduct({ ...product, stock: e.target.value });
-                    
+                    form.append("stock", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -215,37 +236,47 @@ const ProductDashboard = () => {
                   type="file"
                   controlId="formFile"
                   onChange={(e) => {
-                    setProduct({ ...product, photos: [e.target.files[0]] });
+                    if (e.target.files[0]) {
+                      form.append("photos", e.target.files[0]);
+                    }
                   }}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Category</Form.Label>
-                <Form.Select
+                <select
+                  value={form.get("category")}
                   onChange={(e) => {
-                    setProduct({ ...product, category: e.currentTarget.value });
-                    
+                    setProduct({ ...product, category: e.target.value });
+                    form.append("category", e.target.value);
+                    console.log(form.get("category"));
                   }}
                 >
                   <option value="Tees">TEES</option>
                   <option value="Hoodie">HOODIE</option>
-                </Form.Select>
+                </select>
               </Form.Group>
               {isUpdate ? (
-                <Button
-                  variant="outline-dark"
-                  type="submit"
-                  className="w-100"
-                  onClick={(e) => handleUpdate(e)}
-                >
-                  Update
-                </Button>
+                loading ? (
+                  <Button variant="outline-dark" className="w-100">
+                    Loading.....
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline-dark"
+                    type="submit"
+                    className="w-100"
+                    onClick={(e) => handleUpdate(e)}
+                  >
+                    Update
+                  </Button>
+                )
               ) : (
                 <Button
                   variant="outline-dark"
                   type="submit"
                   className="w-100"
-                  onClick={handleAdd}
+                  onClick={(e) => handleAdd(e)}
                 >
                   Add
                 </Button>
