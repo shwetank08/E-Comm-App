@@ -6,7 +6,7 @@ const cookieToken = (user,res) => {
 
     const option = {
         expires: new Date(Date.now()+COOKIETIME*60*60*1000),
-        httpOnly: true
+        httpOnly: true,
     }
     const token = user.getJwtToken();
     console.log(token);

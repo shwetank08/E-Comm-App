@@ -10,7 +10,7 @@ exports.isLoggedIn = BigPromise(async (req, res, next) => {
     (req.headers.authorization && req.headers["authorization"].split(" ")[1]);
 
   if (!token) {
-    throw new CustomError("user not logged in", 400);
+    throw new CustomError("user not logged in", 403);
   }
 
   try {
@@ -19,7 +19,7 @@ exports.isLoggedIn = BigPromise(async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    throw new CustomError("Not authorized to access this route", 400);
+    throw new CustomError("Not authorized to access this route", 403);
   }
 });
 

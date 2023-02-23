@@ -60,7 +60,7 @@ exports.updateProduct = BigPromise(async (req, res) => {
     });
     console.log("image update success")
 }
-
+  console.log("REQ - BODY: ",req.body);
   const product = await Product.findByIdAndUpdate(req.params.id,req.body,{
     new: true,
     runValidators: true

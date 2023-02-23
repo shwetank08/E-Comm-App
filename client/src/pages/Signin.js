@@ -21,6 +21,7 @@ const Signin = () => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
+        credentials: 'include',
         body: JSON.stringify({
           email: user.email,
           password: user.password,

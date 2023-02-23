@@ -22,7 +22,7 @@ const ProductDashboard = () => {
   form.append("description", product.description);
   form.append("price", product.price);
   form.append("stock", product.stock);
-  // form.append("category", product.category);
+  form.append("category", product.category);
 
   //for populating fields to update or create
   // const [item, setItems] = useState({
@@ -77,7 +77,7 @@ const ProductDashboard = () => {
       setLoading(false);
       navigate("/api/u/home");
     } catch (err) {
-      console.log(err);
+      console.log(err.status);
       setLoading(false);
       return alert(err);
     }
@@ -85,7 +85,7 @@ const ProductDashboard = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log(form);
+      console.log("Category - print", form.get("category"));
       const res = await fetch(`/api/${id}/updateproduct`, {
         method: "PUT",
         body: form,
@@ -257,11 +257,6 @@ const ProductDashboard = () => {
                 </select>
               </Form.Group>
               {isUpdate ? (
-                loading ? (
-                  <Button variant="outline-dark" className="w-100">
-                    Loading.....
-                  </Button>
-                ) : (
                   <Button
                     variant="outline-dark"
                     type="submit"
@@ -270,7 +265,6 @@ const ProductDashboard = () => {
                   >
                     Update
                   </Button>
-                )
               ) : (
                 <Button
                   variant="outline-dark"
