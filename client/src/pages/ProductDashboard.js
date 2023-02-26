@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/esm/Container";
 import Card from "react-bootstrap/Card";
+import axios from "axios";
 
 const ProductDashboard = () => {
   //for fetching product if user clicked on update
@@ -14,6 +15,7 @@ const ProductDashboard = () => {
     price: "",
     stock: "",
     category: "",
+    photos: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +25,15 @@ const ProductDashboard = () => {
   form.append("price", product.price);
   form.append("stock", product.stock);
   form.append("category", product.category);
+  form.append("photos", product.photos);
+
+  let formAdd = new FormData();
+  formAdd.append("name", product.name);
+  formAdd.append("description", product.description);
+  formAdd.append("price", product.price);
+  formAdd.append("stock", product.stock);
+  formAdd.append("category", product.category);
+  formAdd.append("photos", product.photos);
 
   //for populating fields to update or create
   // const [item, setItems] = useState({
@@ -59,33 +70,39 @@ const ProductDashboard = () => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      
-      const res = await fetch(`/api/addproduct`, {
-        method: "POST",
-        body: form,
-      });
+    console.log(product);
+    formAdd.set("name", formAdd.get("name"));
+    formAdd.set("description", formAdd.get("description"));
+    formAdd.set("price", formAdd.get("price"));
+    formAdd.set("stock", formAdd.get("stock"));
+    formAdd.set("category", formAdd.get("category"));
+    formAdd.set("photos", formAdd.get("photos"));
 
-      const data = await res.json();
-      console.log("FORM -> ", form.get("category"));
-      if (!data || res.status === 400) {
-        navigate("/api/u/home");
-        return alert("product could not be added");
-      }
-      console.log("success", data);
-      setLoading(false);
-      navigate("/api/u/home");
+    console.log("loading....");
+
+    console.log(formAdd);
+    try {
+      const res = await axios({
+        method: "POST",
+        url: "http://localhost:4000/api/addproduct",
+        data: formAdd,
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("loading completed");
+      console.log("success", res);
+      return navigate("/api/u/home");
+
     } catch (err) {
-      console.log(err.status);
-      setLoading(false);
-      return alert(err);
+      console.log(err);
+      navigate("/api/u/home");
+      return alert("product could not be added");
     }
+
   };
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log("Category - print", form.get("category"));
       const res = await fetch(`/api/${id}/updateproduct`, {
         method: "PUT",
         body: form,
@@ -190,7 +207,8 @@ const ProductDashboard = () => {
                   value={product.name ? product.name : ""}
                   onChange={(e) => {
                     setProduct({ ...product, name: e.target.value });
-                    form.append("name", e.target.value);
+                    form.set("name", e.target.value);
+                    formAdd.set("name", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -202,7 +220,8 @@ const ProductDashboard = () => {
                   value={product.description ? product.description : ""}
                   onChange={(e) => {
                     setProduct({ ...product, description: e.target.value });
-                    form.append("description", e.target.value);
+                    form.set("description", e.target.value);
+                    formAdd.set("description", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -214,7 +233,8 @@ const ProductDashboard = () => {
                   value={product.price ? product.price : ""}
                   onChange={(e) => {
                     setProduct({ ...product, price: e.target.value });
-                    form.append("price", e.target.value);
+                    form.set("price", e.target.value);
+                    formAdd.set("price", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -226,7 +246,8 @@ const ProductDashboard = () => {
                   value={product.stock ? product.stock : ""}
                   onChange={(e) => {
                     setProduct({ ...product, stock: e.target.value });
-                    form.append("stock", e.target.value);
+                    form.set("stock", e.target.value);
+                    formAdd.set("stock", e.target.value);
                   }}
                 />
               </Form.Group>
@@ -237,34 +258,38 @@ const ProductDashboard = () => {
                   controlId="formFile"
                   onChange={(e) => {
                     if (e.target.files[0]) {
+                      setProduct({ ...product, photos: e.target.files[0] });
                       form.append("photos", e.target.files[0]);
+                      formAdd.append("photos", e.target.files[0]);
                     }
                   }}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formGroupPassword">
                 <Form.Label className="text-black">Category</Form.Label>
-                <select
-                  value={form.get("category")}
+                <Form.Select
+                  value={product.category ? product.category : "Tees"}
                   onChange={(e) => {
                     setProduct({ ...product, category: e.target.value });
-                    form.append("category", e.target.value);
-                    console.log(form.get("category"));
+
+                    // form.append("category", e.target.value);
+                    formAdd.set("category", e.target.value);
+                    console.log(formAdd.get("category"));
                   }}
                 >
                   <option value="Tees">TEES</option>
                   <option value="Hoodie">HOODIE</option>
-                </select>
+                </Form.Select>
               </Form.Group>
               {isUpdate ? (
-                  <Button
-                    variant="outline-dark"
-                    type="submit"
-                    className="w-100"
-                    onClick={(e) => handleUpdate(e)}
-                  >
-                    Update
-                  </Button>
+                <Button
+                  variant="outline-dark"
+                  type="submit"
+                  className="w-100"
+                  onClick={(e) => handleUpdate(e)}
+                >
+                  Update
+                </Button>
               ) : (
                 <Button
                   variant="outline-dark"

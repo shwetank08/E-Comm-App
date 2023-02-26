@@ -8,9 +8,10 @@ const {FOLDER} = process.env;
 
 exports.addProduct = BigPromise(async (req, res) => {
   let result;
-
+  console.log(req.body);
   if (!req.files) {
-    return new CustomError("image required", 401);
+    // return new CustomError("image required", 401);
+    console.log("image required")
   }
 
   let file = req.files.photos;
@@ -26,7 +27,7 @@ exports.addProduct = BigPromise(async (req, res) => {
   req.body.user = req.user.id;
 
   const product = await Product.create(req.body);
-
+  console.log("Sending response...", product)
   res.status(200).json({
     success: true,
     product,
@@ -40,6 +41,7 @@ exports.updateProduct = BigPromise(async (req, res) => {
   }
 
   if (req.files) {
+    console.log("updating image")
     // let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
     //   folder: FOLDER,
     // });
@@ -55,12 +57,12 @@ exports.updateProduct = BigPromise(async (req, res) => {
     };
 
     req.body.photos = imageObj;
-    let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
-      folder: FOLDER,
-    });
+    // let res = await cloudinary.v2.uploader.destroy(productToUpdate.photos.id, {
+    //   folder: FOLDER,
+    // });
     console.log("image update success")
 }
-  console.log("REQ - BODY: ",req.body);
+ 
   const product = await Product.findByIdAndUpdate(req.params.id,req.body,{
     new: true,
     runValidators: true

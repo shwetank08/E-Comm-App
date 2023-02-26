@@ -35,7 +35,7 @@ const productSchema = mongoose.Schema(
     category: {
       type: String,
       enum: Object.values(Categories),
-      // default: Categories.Tees,
+      default: Categories.Tees,
     },
     user: {
       type: mongoose.Schema.ObjectId,
