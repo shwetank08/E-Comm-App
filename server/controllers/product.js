@@ -75,12 +75,12 @@ exports.updateProduct = BigPromise(async (req, res) => {
 });
 exports.deleteProduct = BigPromise(async(req,res)=>{
   let productToBeDeleted = await Product.findById(req.params.id);
-
+  console.log(productToBeDeleted);
   let deletePhoto = await cloudinary.v2.uploader.destroy(productToBeDeleted.photos.id,{
     folder: FOLDER
   })
 
-  let deleteProduct = await Product.findByIdAndDelete(req,params.id);
+  let deleteProduct = await Product.findByIdAndDelete(req.params.id);
 
   res.status(200).json({
     success:"true",

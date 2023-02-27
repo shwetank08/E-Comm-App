@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/esm/Container";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -32,6 +30,28 @@ const Home = () => {
     console.log(context.productId?.id);
     context.setIsUpdate(true);
     navigate("/api/u/admindashboard/product");    
+  }
+  const handleDelete = async(e) => {
+    try{
+      console.log(e);
+      const res = await fetch(`/api/${e}/deleteproduct`,{
+        method: "DELETE",
+        headers:{
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await res.json();
+      if(data && res.status === 200){
+        console.log(data);
+        return alert("Delete success");
+      }
+      return alert("Delete Failed");
+    }catch(err){
+      console.log(err);
+      return alert(err);
+    }  
   }
 
   useEffect(() => {
@@ -66,6 +86,9 @@ const Home = () => {
                 ) : (
                   <Button variant="primary">Add To Cart</Button>
                 )}
+                {
+                  context.user.role == "ADMIN" &&  <Button className="mt-2" variant="primary" onClick={()=>handleDelete(item._id)}>Delete</Button>
+                }
               </Card.Body>
             </Card>
           );
