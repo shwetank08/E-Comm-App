@@ -11,6 +11,7 @@ import { userContext } from "./context/userContext";
 import AdminDashBoard from "./pages/AdminDashBoard";
 import OrderDashBoard from "./pages/OrderDashBoard";
 import ProductDashboard from "./pages/ProductDashboard";
+import Cart from "./pages/Cart";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -33,6 +34,9 @@ const App = () => {
           </Route>
           <Route element={<ProtectedRoute/>}>
             <Route path="/api/u/admindashboard/product" element={<ProductDashboard />} />
+          </Route>
+          <Route element={<ProtectedRoute/>}>
+            <Route path="/api/u/cart" element={<Cart />} />
           </Route>
           <Route path="/api/signup" element={<Signup />} />
           <Route path="/api/signin" element={<Signin />} />

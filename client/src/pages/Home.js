@@ -54,6 +54,14 @@ const Home = () => {
     }  
   }
 
+  const AddToCart = (id) => {
+      if(localStorage.getItem(id)){
+        localStorage.setItem(id, parseInt(localStorage.getItem(id))+1);
+      }else{
+        localStorage.setItem(id, 1);
+      }
+  }
+
   useEffect(() => {
     fetchProducts();
     console.log(product);
@@ -84,7 +92,7 @@ const Home = () => {
                 {context.user.role == "ADMIN" ? (
                   <Button variant="primary" onClick={()=>handleAdmin(item._id)}>Update</Button>
                 ) : (
-                  <Button variant="primary">Add To Cart</Button>
+                  <Button variant="primary" onClick={()=>AddToCart(item._id)}>Add To Cart</Button>
                 )}
                 {
                   context.user.role == "ADMIN" &&  <Button className="mt-2" variant="primary" onClick={()=>handleDelete(item._id)}>Delete</Button>
