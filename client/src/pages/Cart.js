@@ -9,6 +9,7 @@ const Cart = () => {
   const [items, setItems] = useState([]);
   const [productid, setProductId] = useState([]);
   const [amount, setAmount] = useState(0);
+  const [price, setPrice] = useState([]);
 
   const getAProduct = async (e) => {
     const response = await fetch(`/api/${e}/getproduct`, {
@@ -22,6 +23,8 @@ const Cart = () => {
     const data = await response.json();
     const itemlist = data.showOneProduct;
     setItems((e) => [...e, itemlist]);
+    console.log(itemlist.price);
+    
   };
   const handleUpdate = async () => {
     const arr = Object.keys(localStorage);
@@ -34,14 +37,26 @@ const Cart = () => {
   const handleRemove = async(id) => {
     localStorage.removeItem(id);
     setItems((item)=>{
-      item.filter((e)=>e._id!=id);
+      item.filter((e)=>e._id!==id);
     })
   }
 
   const handleAmount = () => { 
-    const sum = items.reduce((cur, acc)=>{
-      return cur+acc;
-    },0)
+    console.log(items)
+    let arr = [];
+    items.map((e)=>{
+      let itemExist = localStorage.getItem(e._id);
+      if(itemExist){
+        let times = parseInt(localStorage.getItem(e._id));
+        console.log(times);
+        arr.push(e.price*times);
+      }else{
+        arr.push(e.price);
+      }
+    })
+    console.log(arr);
+    setPrice(arr);
+    let sum = arr.reduce((cur, acc)=>cur+acc,0)
     console.log(sum);
     setAmount(sum);
   }
@@ -73,9 +88,13 @@ const Cart = () => {
 
   useEffect(() => {
     handleUpdate();
-    handleAmount();
   }, [productid.length]);
+  useEffect(() => {
+    handleAmount();
+    console.log("handleAmount have been called")
+  }, [items]);
 
+  
   return (
     <Container style={{marginTop: "5rem"}}>
     <Row>
