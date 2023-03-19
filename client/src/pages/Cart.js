@@ -35,6 +35,7 @@ const Cart = () => {
   };
 
   const handleRemove = async(id) => {
+    console.log(id);
     localStorage.removeItem(id);
     setItems((item)=>{
       item.filter((e)=>e._id!==id);
@@ -77,7 +78,7 @@ const Cart = () => {
                   <Card.Text className="text-center">
                     {item.description}
                   </Card.Text>
-                  <Button variant="primary" onClick={()=>{handleRemove(item._id)}}>Remove</Button>
+                  <Button variant="primary" onClick={(e)=>{handleRemove(item._id)}}>Remove</Button>
                 </Card.Body>
               </Card>
             );
