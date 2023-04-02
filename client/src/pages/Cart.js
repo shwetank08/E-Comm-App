@@ -5,14 +5,16 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import StripeCheckout from "react-stripe-checkout";
-import axios from 'axios';
+import axios from "axios";
+import ListGroup from "react-bootstrap/ListGroup";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
   const [productid, setProductId] = useState([]);
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState([]);
-  const [sKey, setStripeKey] = useState('');
+  const [sKey, setStripeKey] = useState("");
+
 
   const getAProduct = async (e) => {
     const response = await fetch(`/api/${e}/getproduct`, {
@@ -44,7 +46,7 @@ const Cart = () => {
     });
   };
 
-  const handleAmount = async() => {
+  const handleAmount = async () => {
     console.log(items);
     let arr = [];
     items.map((e) => {
@@ -63,25 +65,25 @@ const Cart = () => {
     console.log(sum);
     setAmount(sum);
 
-    try{
-      let res = await axios.get('/api/stripekey');
+    try {
+      let res = await axios.get("/api/stripekey");
       let k = res.data?.stripeKey;
       console.log(k);
       setStripeKey(k);
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   };
-  const makePaymentToken = token => {
-    try{
-      axios.post('/api/capturepayment',{
+  const makePaymentToken = (token) => {
+    try {
+      axios.post("/api/capturepayment", {
         token: token.id,
-        amount: amount
+        amount: amount,
       });
-    }catch(err){
+    } catch (err) {
       console.log(err);
-    };
-  }
+    }
+  };
 
   const DisplayItems = () => {
     return (
@@ -132,10 +134,18 @@ const Cart = () => {
           <Container>
             <h1>CART CONTENT</h1>
             <h2>Amount - {amount}</h2>
-            <StripeCheckout
-              token={makePaymentToken}
-              stripeKey={sKey}
-            />
+            {items &&
+              items.map((item) => {
+                return (
+                  <ListGroup>
+                    <ListGroup.Item variant="primary"><div className="d-flex justify-around"><h1>{item.name}</h1><h3>{localStorage.getItem(item._id)}X{item.price}</h3></div></ListGroup.Item>
+                  </ListGroup>
+                );
+              })
+            }
+            <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
+              <Button variant="primary">Check Out</Button>
+            </StripeCheckout>
           </Container>
         </Col>
       </Row>
