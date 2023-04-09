@@ -132,20 +132,21 @@ const Cart = () => {
         </Col>
         <Col className="col-8">
           <Container>
-            <h1>CART CONTENT</h1>
-            <h2>Amount - {amount}</h2>
+            <h1 className="d-flex justify-center mb-2">CART CONTENT</h1>
             {items &&
               items.map((item) => {
                 return (
                   <ListGroup>
-                    <ListGroup.Item variant="primary"><div className="d-flex justify-around"><h1>{item.name}</h1><h3>{localStorage.getItem(item._id)}X{item.price}</h3></div></ListGroup.Item>
+                    <ListGroup.Item variant="dark"><div className="d-flex justify-between"><h3 style={{maxWidth: "100px"}}>{item.name}</h3><h4>{localStorage.getItem(item._id)} X &#8377;{item.price}</h4></div></ListGroup.Item>
                   </ListGroup>
                 );
               })
             }
+            <h2 className="d-flex justify-between mt-3"><h2>Total</h2><h2>&#8377;{amount}</h2></h2>
             <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
-              <Button variant="primary">Check Out</Button>
+              <Button variant="primary" className="mt-2 w-100">Check Out</Button>
             </StripeCheckout>
+           
           </Container>
         </Col>
       </Row>
