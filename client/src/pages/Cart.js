@@ -7,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import StripeCheckout from "react-stripe-checkout";
 import axios from "axios";
 import ListGroup from "react-bootstrap/ListGroup";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
@@ -14,6 +15,7 @@ const Cart = () => {
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState([]);
   const [sKey, setStripeKey] = useState("");
+  const navigate = useNavigate();
 
 
   const getAProduct = async (e) => {
@@ -80,6 +82,9 @@ const Cart = () => {
         token: token.id,
         amount: amount,
       });
+      localStorage.clear();
+      setItems([]);
+      navigate("/api/u/home");
     } catch (err) {
       console.log(err);
     }
@@ -126,30 +131,34 @@ const Cart = () => {
 
   return (
     <Container style={{ marginTop: "5rem" }}>
+    {items.length>0?
       <Row>
-        <Col className="col-4 d-flex flex-column flex-wrap gap-1">
-          <DisplayItems />
-        </Col>
-        <Col className="col-8">
-          <Container>
-            <h1 className="d-flex justify-center mb-2">CART CONTENT</h1>
-            {items &&
-              items.map((item) => {
-                return (
-                  <ListGroup>
-                    <ListGroup.Item variant="dark"><div className="d-flex justify-between"><h3 style={{maxWidth: "100px"}}>{item.name}</h3><h4>{localStorage.getItem(item._id)} X &#8377;{item.price}</h4></div></ListGroup.Item>
-                  </ListGroup>
-                );
-              })
-            }
-            <h2 className="d-flex justify-between mt-3"><h2>Total</h2><h2>&#8377;{amount}</h2></h2>
-            <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
-              <Button variant="primary" className="mt-2 w-100">Check Out</Button>
-            </StripeCheckout>
-           
-          </Container>
-        </Col>
-      </Row>
+      <Col className="col-4 d-flex flex-column flex-wrap gap-1">
+        <DisplayItems />
+      </Col>
+      <Col className="col-8">
+        <Container>
+          <h1 className="d-flex justify-center mb-2">CART CONTENT</h1>
+          {items &&
+            items.map((item) => {
+              return (
+                <ListGroup>
+                  <ListGroup.Item variant="dark"><div className="d-flex justify-between"><h3 style={{maxWidth: "100px"}}>{item.name}</h3><h4>{localStorage.getItem(item._id)} X &#8377;{item.price}</h4></div></ListGroup.Item>
+                </ListGroup>
+              );
+            })
+          }
+          <h2 className="d-flex justify-between mt-3"><h2>Total</h2><h2>&#8377;{amount}</h2></h2>
+          <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
+            <Button variant="primary" className="mt-2 w-100">Check Out</Button>
+          </StripeCheckout>
+         
+        </Container>
+      </Col>
+    </Row>:
+      <h1 className="d-flex justify-center align-middle w-100 h-100">Cart Empty</h1>
+    }
+      
     </Container>
   );
 };
