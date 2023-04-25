@@ -9,6 +9,7 @@ import axios from "axios";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useNavigate } from "react-router-dom";
 
+
 const Cart = () => {
   const [items, setItems] = useState([]);
   const [productid, setProductId] = useState([]);
@@ -95,6 +96,7 @@ const Cart = () => {
       <>
         {items &&
           items.map((item) => {
+            console.log(items)
             return (
               <Card style={{ width: "16rem" }} key={item._id}>
                 <Card.Img variant="top" src={item.photos?.secure_url} />
@@ -149,7 +151,7 @@ const Cart = () => {
             })
           }
           <h2 className="d-flex justify-between mt-3"><h2>Total</h2><h2>&#8377;{amount}</h2></h2>
-          <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
+          <StripeCheckout token={makePaymentToken} stripeKey={sKey} email="s@dev.com" shippingAddress>
             <Button variant="primary" className="mt-2 w-100">Check Out</Button>
           </StripeCheckout>
          
