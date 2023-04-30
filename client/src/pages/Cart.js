@@ -77,15 +77,56 @@ const Cart = () => {
       console.log(err);
     }
   };
-  const makePaymentToken = (token) => {
+
+  // exports.createOrder = BigPromise(async (req, res) => {
+  //   const {
+  //     shippingInfo,
+  //     orderItems,
+  //     paymentInfo,
+  //     taxAmount,
+  //     shippingAmount,
+  //     totalAmount,
+  //   } = req.body;
+  
+  //   const userid = req.params.id;
+  
+  //   const order = await Order.create({
+  //     shippingInfo,
+  //     user: userid,
+  //     orderItems,
+  //     paymentInfo,
+  //     taxAmount,
+  //     shippingAmount,
+  //     totalAmount
+  //   });
+  
+  //   res.status(200).json({
+  //     success: true,
+  //     order
+  //   })
+  // });
+  const populateID = async() => {
+    const response = await fetch(`/api/getpaymentdetail`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log("DATA", data);
+
+  }; 
+  const makePaymentToken = async(token) => {
     try {
       axios.post("/api/capturepayment", {
         token: token.id,
         amount: amount,
       });
+      await populateID();
       localStorage.clear();
       setItems([]);
-      navigate("/api/u/home");
+      // navigate("/api/u/home");
     } catch (err) {
       console.log(err);
     }
