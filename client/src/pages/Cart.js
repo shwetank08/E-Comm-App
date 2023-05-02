@@ -8,7 +8,7 @@ import StripeCheckout from "react-stripe-checkout";
 import axios from "axios";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useNavigate } from "react-router-dom";
-
+import Form from "react-bootstrap/Form";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
@@ -16,6 +16,14 @@ const Cart = () => {
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState([]);
   const [sKey, setStripeKey] = useState("");
+  const [shippingAddress, setShippingAddress] = useState({
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    contactNumber: "",
+    postalCode: "",
+  })
   const navigate = useNavigate();
 
 
@@ -87,9 +95,9 @@ const Cart = () => {
   //     shippingAmount,
   //     totalAmount,
   //   } = req.body;
-  
+
   //   const userid = req.params.id;
-  
+
   //   const order = await Order.create({
   //     shippingInfo,
   //     user: userid,
@@ -99,34 +107,21 @@ const Cart = () => {
   //     shippingAmount,
   //     totalAmount
   //   });
-  
+
   //   res.status(200).json({
   //     success: true,
   //     order
   //   })
   // });
-  const populateID = async() => {
-    const response = await fetch(`/api/getpaymentdetail`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-    const data = await response.json();
-    console.log("DATA", data);
-
-  }; 
-  const makePaymentToken = async(token) => {
+  const makePaymentToken = async (token) => {
     try {
       axios.post("/api/capturepayment", {
         token: token.id,
         amount: amount,
       });
-      await populateID();
       localStorage.clear();
       setItems([]);
-      // navigate("/api/u/home");
+      navigate("/api/u/home");
     } catch (err) {
       console.log(err);
     }
@@ -137,7 +132,7 @@ const Cart = () => {
       <>
         {items &&
           items.map((item) => {
-            console.log(items)
+            console.log(items);
             return (
               <Card style={{ width: "16rem" }} key={item._id}>
                 <Card.Img variant="top" src={item.photos?.secure_url} />
@@ -174,34 +169,98 @@ const Cart = () => {
 
   return (
     <Container style={{ marginTop: "5rem" }}>
-    {items.length>0?
-      <Row>
-      <Col className="col-4 d-flex flex-column flex-wrap gap-1">
-        <DisplayItems />
-      </Col>
-      <Col className="col-8">
-        <Container>
-          <h1 className="d-flex justify-center mb-2">CART CONTENT</h1>
-          {items &&
-            items.map((item) => {
-              return (
-                <ListGroup>
-                  <ListGroup.Item variant="dark"><div className="d-flex justify-between"><h3 style={{maxWidth: "100px"}}>{item.name}</h3><h4>{localStorage.getItem(item._id)} X &#8377;{item.price}</h4></div></ListGroup.Item>
-                </ListGroup>
-              );
-            })
-          }
-          <h2 className="d-flex justify-between mt-3"><h2>Total</h2><h2>&#8377;{amount}</h2></h2>
-          <StripeCheckout token={makePaymentToken} stripeKey={sKey} email="s@dev.com" shippingAddress>
-            <Button variant="primary" className="mt-2 w-100">Check Out</Button>
-          </StripeCheckout>
-         
-        </Container>
-      </Col>
-    </Row>:
-      <h1 className="d-flex justify-center align-middle w-100 h-100">Cart Empty</h1>
-    }
-      
+      {items.length > 0 ? (
+        <Row>
+          <Col className="col-4 d-flex flex-column flex-wrap gap-1">
+            <DisplayItems />
+          </Col>
+          <Col className="col-8">
+            <Container>
+              <h1 className="d-flex justify-center mb-2">CART CONTENT</h1>
+              {items &&
+                items.map((item) => {
+                  return (
+                    <ListGroup>
+                      <ListGroup.Item variant="dark">
+                        <div className="d-flex justify-between">
+                          <h3 style={{ maxWidth: "100px" }}>{item.name}</h3>
+                          <h4>
+                            {localStorage.getItem(item._id)} X &#8377;
+                            {item.price}
+                          </h4>
+                        </div>
+                      </ListGroup.Item>
+                    </ListGroup>
+                  );
+                })}
+              <h2 className="d-flex justify-between mt-3">
+                <h2>Total</h2>
+                <h2>&#8377;{amount}</h2>
+              </h2>
+
+              <Form style={{backgroundColor: "#D3D3D4", padding: "1.5rem"}}>
+                <h1 className="d-flex justify-center py-2">Shipping Address</h1>
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="formGridEmail">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="email" placeholder="Enter email"
+                    onChange={(e) => {
+                      setShippingAddress({ ...shippingAddress, email: e.target.value });
+                    }}/>
+                  </Form.Group>
+
+                  <Form.Group as={Col} controlId="formGridPassword">
+                    <Form.Label>Contact Number</Form.Label>
+                    <Form.Control type="number" placeholder="1234567890" onChange={(e) => {
+                      setShippingAddress({ ...shippingAddress, contactNumber: e.target.value });
+                    }}/>
+                  </Form.Group>
+                </Row>
+
+                <Form.Group className="mb-3" controlId="formGridAddress1">
+                  <Form.Label>Address</Form.Label>
+                  <Form.Control as="textarea" rows={3} placeholder="1234 Main St" onChange={(e) => {
+                    setShippingAddress({ ...shippingAddress, address: e.target.value });
+                  }}/>
+                </Form.Group>
+
+
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="formGridCity">
+                    <Form.Label>City</Form.Label>
+                    <Form.Control onChange={(e) => {
+                      setShippingAddress({ ...shippingAddress, city: e.target.value });
+                    }}/>
+                  </Form.Group>
+
+                  <Form.Group as={Col} controlId="formGridCity">
+                    <Form.Label>State</Form.Label>
+                    <Form.Control onChange={(e) => {
+                      setShippingAddress({ ...shippingAddress, state: e.target.value });
+                    }}/>
+                  </Form.Group>
+
+                  <Form.Group as={Col} controlId="formGridZip">
+                    <Form.Label>Zip</Form.Label>
+                    <Form.Control type="number" onChange={(e) => {
+                      setShippingAddress({ ...shippingAddress, postalCode: e.target.value });
+                    }}/>
+                  </Form.Group>
+                </Row>
+                <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
+                  <Button variant="primary" className="mt-2 w-100">
+                    Check Out
+                  </Button>
+                </StripeCheckout>
+              </Form>
+            </Container>
+          </Col>
+        </Row>
+      ) : (
+        <h1 className="d-flex justify-center align-middle w-100 h-100">
+          Cart Empty
+        </h1>
+      )}
     </Container>
   );
 };
