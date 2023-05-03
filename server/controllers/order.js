@@ -9,9 +9,6 @@ exports.createOrder = BigPromise(async (req, res) => {
   const {
     shippingInfo,
     orderItems,
-    paymentInfo,
-    taxAmount,
-    shippingAmount,
     totalAmount,
   } = req.body;
 
@@ -21,9 +18,6 @@ exports.createOrder = BigPromise(async (req, res) => {
     shippingInfo,
     user: userid,
     orderItems,
-    paymentInfo,
-    taxAmount,
-    shippingAmount,
     totalAmount
   });
 

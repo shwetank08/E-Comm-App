@@ -8,6 +8,7 @@ import StripeCheckout from "react-stripe-checkout";
 import axios from "axios";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useNavigate } from "react-router-dom";
+import { userContext } from "../context/userContext";
 import Form from "react-bootstrap/Form";
 
 const Cart = () => {
@@ -25,7 +26,8 @@ const Cart = () => {
     postalCode: "",
   })
   const navigate = useNavigate();
-
+  const context = useContext(userContext);
+  const id = context.productId?.id;
 
   const getAProduct = async (e) => {
     const response = await fetch(`/api/${e}/getproduct`, {
@@ -126,6 +128,21 @@ const Cart = () => {
       console.log(err);
     }
   };
+
+  const handleShipping = async() => {
+    const response = fetch(`/api/${id}/order/create`,{
+      method: "POST",
+      body: JSON.stringify({
+        email: shippingAddress.email,
+        address: shippingAddress.address,
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        contactNumber: shippingAddress.contactNumber,
+        postalCode: shippingAddress.postalCode,
+        
+      }),
+    });
+  }
 
   const DisplayItems = () => {
     return (
@@ -248,7 +265,7 @@ const Cart = () => {
                   </Form.Group>
                 </Row>
                 <StripeCheckout token={makePaymentToken} stripeKey={sKey}>
-                  <Button variant="primary" className="mt-2 w-100">
+                  <Button variant="primary" className="mt-2 w-100" onClick={handleShipping}>
                     Check Out
                   </Button>
                 </StripeCheckout>
