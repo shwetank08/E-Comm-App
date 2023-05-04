@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
@@ -41,7 +41,7 @@ const Cart = () => {
     const data = await response.json();
     const itemlist = data.showOneProduct;
     setItems((e) => [...e, itemlist]);
-    console.log(itemlist.price);
+    console.log(itemlist);
   };
   const handleUpdate = async () => {
     const arr = Object.keys(localStorage);
@@ -130,6 +130,7 @@ const Cart = () => {
   };
 
   const handleShipping = async() => {
+    try{
     const response = fetch(`/api/${id}/order/create`,{
       method: "POST",
       body: JSON.stringify({
@@ -139,9 +140,19 @@ const Cart = () => {
         state: shippingAddress.state,
         contactNumber: shippingAddress.contactNumber,
         postalCode: shippingAddress.postalCode,
-        
+        orderItems: [{
+          name: items.name,
+          quantity: items.stock,
+          image: items.photos?.secure_url,
+          price: items.price,
+          product: items._id
+      }],
+        totalAmount: price
       }),
     });
+  }catch(err){
+    console.log(err);
+  }
   }
 
   const DisplayItems = () => {
