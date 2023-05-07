@@ -25,16 +25,16 @@ const Cart = () => {
     contactNumber: "",
     postalCode: "",
   });
-  const [orderItems, setOrderItems] = useState({
+  const [orderItems, setOrderItems] = useState([{
     name: "",
     quantity: "",
-    image: "",
     price: "",
     product: ""
-  })
+  }]);
   const navigate = useNavigate();
   const context = useContext(userContext);
-  const id = context.productId?.id;
+  const user_id = context.user?.userid;
+  console.log(user_id);
 
   const getAProduct = async (e) => {
     const response = await fetch(`/api/${e}/getproduct`, {
@@ -48,6 +48,12 @@ const Cart = () => {
     const data = await response.json();
     const itemlist = data.showOneProduct;
     setItems((e) => [...e, itemlist]);
+    setOrderItems((e)=>[...e, {
+      name: itemlist.name,
+      quantity: itemlist.stock,
+      price: itemlist.price,
+      product: itemlist._id
+    }])
     console.log(itemlist);
   };
   const handleUpdate = async () => {
@@ -151,7 +157,7 @@ const Cart = () => {
         
       // })
       console.log(shippingAddress);
-      const response = fetch(`/api/${id}/order/create`, {
+      const response = fetch(`/api/${user_id}/order/create`, {
         method: "POST",
         body: JSON.stringify({
           email: shippingAddress.email,
@@ -160,15 +166,7 @@ const Cart = () => {
           state: shippingAddress.state,
           contactNumber: shippingAddress.contactNumber,
           postalCode: shippingAddress.postalCode,
-          // orderItems: [
-          //   {
-          //     name: items.name,
-          //     quantity: items.stock,
-          //     image: items.photos?.secure_url,
-          //     price: items.price,
-          //     product: items._id,
-          //   },
-          // ],
+          orderItems: orderItems,
           totalAmount: price,
         }),
       });
@@ -182,7 +180,6 @@ const Cart = () => {
       <>
         {items &&
           items.map((item) => {
-            console.log(items);
             return (
               <Card style={{ width: "16rem" }} key={item._id}>
                 <Card.Img variant="top" src={item.photos?.secure_url} />
